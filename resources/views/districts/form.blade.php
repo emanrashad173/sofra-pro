@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label for="name">الاسم</label>
+  {!! Form::text('name' ,null, [
+  'class' =>'form-control'
+  ])!!}
+</div>
+<div class="form-group">
+  <label for="id">المدينة</label>
+  {!! Form::select('city_id',App\Models\City::pluck('name','id'));
+!!}
+</div>
+<div class="form-group">
+  <button class="btn btn-primary" type="submit">اضافة</button>
+</div>
