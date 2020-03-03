@@ -22,8 +22,8 @@ class RedirectIfAuthenticated
         case 'web-client':
           return redirect('home');
           break;
-        case: 'web-restaurant'
-          return redirect('products');
+        case 'web-restaurant' :
+          return redirect('restaurant/products');
         default:
           return redirect(RouteServiceProvider::HOME);
           break;

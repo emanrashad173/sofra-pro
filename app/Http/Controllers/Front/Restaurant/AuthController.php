@@ -69,7 +69,7 @@ class AuthController extends Controller
          if(Hash::check($request->password,$restaurant->password))
          {
            auth('web-restaurant')->login($restaurant);
-           return redirect('products');
+           return redirect('/restaurant/products');
          }
          else{
            return redirect()->back();

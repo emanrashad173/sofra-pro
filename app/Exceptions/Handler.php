@@ -71,7 +71,7 @@ class Handler extends ExceptionHandler
       case 'web-client':
         return redirect('login-client');
         break;
-      case: 'web-restaurant'
+      case 'web-restaurant':
         return redirect('login-restaurant');
       default:
         return redirect('login');

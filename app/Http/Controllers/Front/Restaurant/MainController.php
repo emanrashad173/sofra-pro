@@ -9,7 +9,6 @@ use App\Models\Restaurant;
 
 
 
-
 class MainController extends Controller
 {
 
@@ -41,6 +40,7 @@ class MainController extends Controller
 
        return redirect('products');
   }
+
   //edit- product
   public function editProduct($id)
   {
@@ -109,7 +109,6 @@ class MainController extends Controller
       return redirect('offers');
   }
 
-
   //offer-delete
   public function offerDelete($id)
   {
@@ -122,7 +121,7 @@ class MainController extends Controller
   public function offers()
   {
       // $restaurant = Restaurant::find(auth()->user()->id);
-      $offers = auth()->user()->offers()->latest()->paginate(4);
+      $offers = auth('web-restaurant')->user()->offers()->latest()->paginate(4);
       return view('front.restaurant.offers-restaurant',compact('offers'));
   }
 
@@ -134,30 +133,28 @@ class MainController extends Controller
       return view('front.restaurant.products-restaurant',compact('products'));
   }
 
-
-
   //order-news
   public function newOrder(){
-    $orders = auth()->user()->orders()->where('state' , '=' ,'pending')->latest()->paginate(2);
+    $orders = auth('web-restaurant')->user()->orders()->where('state' , '=' ,'pending')->latest()->paginate(2);
     return view('front.restaurant.order-news' ,compact('orders'));
   }
 
   //order-current
   public function currentOrder(){
-    $orders = auth()->user()->orders()->where('state' , '=' ,'accepted')->latest()->paginate(2);
+    $orders = auth('web-restaurant')->user()->orders()->where('state' , '=' ,'accepted')->latest()->paginate(2);
     return view('front.restaurant.order-current' ,compact('orders'));
   }
 
   //order-previous
   public function previousOrder(){
-    $orders = auth()->user()->orders()->whereNotIn('state' , ['pending','accepted'])->latest()->paginate(2);
+    $orders = auth('web-restaurant')->user()->orders()->whereNotIn('state' , ['pending','accepted'])->latest('id')->paginate(20);
     return view('front.restaurant.order-previous' ,compact('orders'));
   }
 
   //restaurant accept-orders
   public function acceptOrder($id)
   {
-    $order = auth()->user()->orders()->find($id);
+    $order = auth('web-restaurant')->user()->orders()->find($id);
     $order->update(['state'=> 'accepted']);
     return back();
   }
@@ -165,7 +162,7 @@ class MainController extends Controller
   //restaurant confirm-orders
   public function confirmOrder($id)
   {
-    $order = auth()->user()->orders()->find($id);
+    $order = auth('web-restaurant')->user()->orders()->find($id);
     $order->update(['state'=> 'confirmed']);
     return back();
   }
@@ -173,7 +170,7 @@ class MainController extends Controller
   //restaurant reject-orders
   public function rejectOrder($id)
   {
-    $order = auth()->user()->orders()->find($id);
+    $order = auth('web-restaurant')->user()->orders()->find($id);
     $order->update(['state'=> 'rejected']);
     return back();
   }

@@ -10,7 +10,6 @@ use App\Models\Comment;
 use App\Models\Order;
 
 
-
 class MainController extends Controller
 {
   //new-order
@@ -153,27 +152,26 @@ class MainController extends Controller
    //cart-show
    public function cart()
    {
-       $order = auth('web-client')->user()->orders()->where('state' ,'cart')->first();
+      $order = auth('web-client')->user()->orders()->where('state' ,'cart')->first();
+if($order)
+  {
        $products = $order->products()->get();
-       if($products)
-       {
-          return view('front.client.cart', compact('products'));
-       }
-       else{
-       return view('front.client.cart');
-       }
+
+       return view('front.client.cart', compact('products'));
    }
+   return view('front.client.cart');
+ }
 
    //removeProduct
    public function removeProduct($id)
    {
        $order =auth('web-client')->user()->orders()->where('state' ,'cart')->first();
        $order->products()->detach($id);
-       // $productCount = $order->products()->count();
-       // if($productCount == 0)
-       // {
-       //      $order->delete();
-       // }
+       $productCount = $order->products()->count();
+       if($productCount == 0)
+       {
+            $order->delete();
+       }
        return redirect('/restaurant-page/'.$order->restaurant_id);
    }
 }

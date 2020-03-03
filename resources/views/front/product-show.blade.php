@@ -38,13 +38,14 @@
         <h2>المزيد من أكلات هذا المطعم</h2>
         <div class="meals-imgs">
             <div class="contanier-fluid">
-              @foreach($products as $product)
                 <div class="slider">
+                  @foreach($products as $product)
                     <div class="item">
                         <img src="{{asset($product->image)}}" alt="Meal">
                     </div>
+                    @endforeach
+
                 </div>
-              @endforeach
             </div>
         </div>
     </section>
