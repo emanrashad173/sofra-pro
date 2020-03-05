@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Restaurant\Api;
+namespace App\Http\Controllers\Api\Restaurant;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -22,14 +22,21 @@ class MainController extends Controller
           'name' => 'required',
           'description' => 'required' ,
           'price' => 'required' ,
-          'image' => 'required' ,
+          'image' => 'required|image' ,
           'preparation_time' => 'required'
         ]);
         if($validator->fails())
         {
             return apiResponse(0,$validator->errors()->first(),$validator->errors());
         }
+        $img = $request->file('image');
+        $directionPath = public_path().'/uploads/image/products/';
+        $extension = $img->getClientOriginalExtension();
+        $name = rand('22222','999999'). '.' . $extension;
+        $img->move($directionPath, $name);
         $product =$request->user()->products()->create($request->all());
+        $product->image ='uploads/image/products/'.$name;
+        $product->save();
         return apiResponse(1,'success' ,$product);
    }
 
@@ -53,8 +60,6 @@ class MainController extends Controller
     //products
     public function products(Request $request)
     {
-        // $restaurant = Restaurant::find($request->id);
-        // $products =$request->user()->products()->paginate(5);
         $products = Product::where('restaurant_id' ,$request->user()->id)->paginate(10);
         return apiResponse(1,'success' ,$products);
     }
@@ -63,7 +68,7 @@ class MainController extends Controller
     public function offerCreate(Request $request)
     {
          $validator = validator()->make($request->all(), [
-           'image' => 'required' ,
+           'image' => 'required|image' ,
            'description' => 'required' ,
            'from_date' => 'required',
            'to_date' => 'required'
@@ -103,8 +108,6 @@ class MainController extends Controller
      //offers
      public function offers(Request $request)
      {
-         // $restaurant = Restaurant::find($request->id);
-         // $products =$request->user()->products()->paginate(5);
          $offers = Offer::where('restaurant_id' ,$request->user()->id)->paginate(10);
          return apiResponse(1,'success' ,$offers);
      }
@@ -277,7 +280,6 @@ class MainController extends Controller
      //commission
      public function commission(Request $request)
      {
-
        $sales = $request->user()->orders()->where('state','delivered')->sum('cost');
        $commission = settings()->commission * $sales / 100;
        $received = $request->user()->payment()->sum('received_money');

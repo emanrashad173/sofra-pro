@@ -68,8 +68,6 @@ class MainController extends Controller
       }
 
       $contact = Contact::create($request->all());
-      $contact->save();
-
       return apiResponse(1, 'success');
     }
 
@@ -85,6 +83,7 @@ class MainController extends Controller
    {
        $restaurants = Restaurant::with('district.city')->
        where(function($restaurant) use($request){
+
               if ($request->has('city_id')) {
                  $restaurant->whereHas('district',function($district) use($request){
                    $district->where('city_id',$request->city_id);
@@ -133,6 +132,5 @@ class MainController extends Controller
        $offer = Offer::find($request->id);
        return apiResponse(1,'success',$offer);
    }
-
 
 }

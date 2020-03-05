@@ -120,7 +120,6 @@ class MainController extends Controller
   //offers
   public function offers()
   {
-      // $restaurant = Restaurant::find(auth()->user()->id);
       $offers = auth('web-restaurant')->user()->offers()->latest()->paginate(4);
       return view('front.restaurant.offers-restaurant',compact('offers'));
   }
@@ -128,7 +127,6 @@ class MainController extends Controller
   //products
   public function products()
   {
-      // $restaurant = Restaurant::find(auth()->user()->id);
       $products = auth('web-restaurant')->user()->products()->latest()->paginate(9);
       return view('front.restaurant.products-restaurant',compact('products'));
   }

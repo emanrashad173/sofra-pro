@@ -43,8 +43,6 @@ Route::group(['prefix'=>'v1','namespace'=>'Api'],function()
         Route::post('new-password' ,'AuthController@newPassword');
 
 
-
-
         Route::group(['middleware' => 'auth:api-client'],function(){
           //client-auth
           Route::post('register-token','AuthController@registerToken');
@@ -57,11 +55,6 @@ Route::group(['prefix'=>'v1','namespace'=>'Api'],function()
           Route::post('deliver-order' , 'MainController@deliveredOrder');
           Route::post('decline-order' , 'MainController@declinedOrder');
           Route::get('order' ,'MainController@orderShow');
-
-
-
-
-
         });
 
     });
@@ -92,8 +85,6 @@ Route::group(['prefix'=>'v1','namespace'=>'Api'],function()
           Route::post('accept-order' , 'MainController@acceptOrder');
           Route::post('confirm-order' , 'MainController@confirmOrder');
           Route::post('reject-order' , 'MainController@rejectOrder');
-
-
         });
 
     });

@@ -84,9 +84,6 @@ Route::group(['namespace'=>'Front'],function()
         Route::get('/new-order/{id}','MainController@newOrder');
         Route::put('/create-order/{id}','MainController@createOrder');
         Route::get('/logout','AuthController@logout');
-
-
-
     });
   });
 

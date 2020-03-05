@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client\Api;
+namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -144,7 +144,7 @@ class MainController extends Controller
         }
         if($request->state =='previous')      //rejected delivered declined
         {
-          $order->whereNotIn('state' , ['pending','accepted','confirmed']);
+          $order->whereNotIn('state' , ['pending','accepted','confirmed','cart']);
         }
       })->latest()->paginate(10);
 
