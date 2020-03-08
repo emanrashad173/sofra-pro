@@ -6,14 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPassword;
 use App\Models\Restaurant;
 use App\Models\Token;
+use JWTAuth;
+use JWTFactory;
+use Response;
+use Config;
 
 
 class AuthController extends Controller
 {
+  public function __construct()
+    {
+        Auth::shouldUse('api-restaurant');
+    }
+
     //Register
     public function register(Request $request)
     {
@@ -44,10 +55,11 @@ class AuthController extends Controller
         $img->move($directionPath, $name);
         $restaurant=Restaurant::create($request->all());
         $restaurant->image ='uploads/image/restaurants/'.$name;
-        $restaurant->api_token = Str::random(60);
+        $restaurant = Restaurant::first();
+        $token = JWTAuth::fromUser($restaurant);
         $restaurant->save();
 
-        return apiResponse(1,'successed',['api_token'=>$restaurant->api_token,'restaurant'=>$restaurant]);
+        return apiResponse(1,'successed',['token'=>$token,'restaurant'=>$restaurant]);
     }
 
     //login
@@ -58,25 +70,27 @@ class AuthController extends Controller
           'password'=>'required'
         ]);
 
-       $restaurant=Restaurant::where('email',$request->email)->first();
-
-        if($restaurant)
+        if($validator->fails())
         {
-           if(Hash::check($request->password,$restaurant->password)){
-               return apiResponse(1,'تم التسجيل',[
-                 'api_token'=>$restaurant->api_token,
-                 'restaurant'=>$restaurant
-               ]);
-           }
-           else
+          return apiResponse(0,$validator->errors());
+        }
+        Config::set('jwt.user', 'App\Models\Restaurant');
+        Config::set('auth.providers.users.model', \App\Models\Restaurant::class);
+        $credentials = $request->only('email', 'password');
+        $token = null;
+        try {
+                 if (!$token = JWTAuth::attempt($credentials)) {
+                     return apiResponse(0,'بيانات عير صحيحة');
+                 }
+            }
+        catch (JWTException $e)  //error in server
            {
-               return apiResponse(0,'بيانات عير صحيحة');
+                 return apiResponse(0,'حدث خطا في السيرفر');
            }
-        }
-        else
-        {
-          return apiResponse(0,'بيانات عير صحيحة');
-        }
+       return apiResponse(1,'تم التسجيل',[
+         'token'=>$token,
+         'restaurant'=>$request->email
+       ]);
     }
 
     //reset-password

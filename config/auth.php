@@ -42,12 +42,12 @@ return [
         ],
 
         'api-client' => [
-            'driver' => 'token',
+            'driver' => 'jwt',
             'provider' => 'clients',
             'hash' => false,
         ],
         'api-restaurant' => [
-            'driver' => 'token',
+            'driver' => 'jwt',
             'provider' => 'restaurants',
             'hash' => false,
         ],

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
-class Restaurant extends Authenticatable
+
+class Restaurant extends Authenticatable implements JWTSubject
 {
     protected $guard = 'restaurants';
     protected $table = 'restaurants';
@@ -68,7 +70,16 @@ class Restaurant extends Authenticatable
         return $this->morphMany('App\Models\Notification', 'notifiable');
     }
 
+    //JWTAuth
+    public function getJWTIdentifier()
+    {
+      return $this->getKey(); //Eloquent Model method
+    }
 
+    public function getJWTCustomClaims()
+    {
+     return [];
+    }
 
 
 }

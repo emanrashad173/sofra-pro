@@ -5,22 +5,35 @@ namespace App\Http\Controllers\Api\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPassword;
 use App\Models\Client;
 use App\Models\Token;
+use JWTAuth;
+use JWTFactory;
+use Response;
+use Config;
+
 
 
 class AuthController extends Controller
 {
+
+  public function __construct()
+    {
+        Auth::shouldUse('api-client');
+    }
+
     //Register
     public function register(Request $request)
     {
         $validator = validator()->make($request->all(),[
           'name'=>'required',
           'phone'=>'required|digits:11',
-          'email'=>'required|unique:clients',
+          'email'=>'required|email|unique:clients',
           'password'=>'required|confirmed',
           'district_id'=>'required',
         ]);
@@ -31,11 +44,11 @@ class AuthController extends Controller
         }
 
         $request->merge(['password'=>bcrypt($request->password)]);
-        $client=Client::create($request->all());
-        $client->api_token = Str::random(60);
-        $client->save();
+        $client= Client::create($request->all());
+        $client = Client::first();
+        $token = JWTAuth::fromUser($client);
 
-        return apiResponse(1,'successed',['api_token'=>$client->api_token,'client'=>$client]);
+        return apiResponse(1,'successed',['token'=>$token,'client'=>$client]);
     }
 
     //login
@@ -46,25 +59,27 @@ class AuthController extends Controller
           'password'=>'required'
         ]);
 
-        $client=Client::where('email',$request->email)->first();
-
-        if($client)
+        if($validator->fails())
         {
-           if(Hash::check($request->password,$client->password)){
-               return apiResponse(1,'تم التسجيل',[
-                 'api_token'=>$client->api_token,
-                 'client'=>$client
-               ]);
-           }
-           else
+          return apiResponse(0,$validator->errors());
+        }
+        Config::set('jwt.user', 'App\Models\Client');
+		    Config::set('auth.providers.users.model', \App\Models\Client::class);
+        $credentials = $request->only('email', 'password');
+        $token = null;
+        try {
+                 if (!$token = JWTAuth::attempt($credentials)) {
+                     return apiResponse(0,'بيانات عير صحيحة');
+                 }
+            }
+        catch (JWTException $e)  //error in server
            {
-               return apiResponse(0,'بيانات عير صحيحة');
+                 return apiResponse(0,'حدث خطا في السيرفر');
            }
-        }
-        else
-        {
-          return apiResponse(0,'بيانات عير صحيحة');
-        }
+       return apiResponse(1,'تم التسجيل',[
+         'token'=>$token,
+         'client'=>$request->email
+       ]);
     }
 
     //Reset-password
