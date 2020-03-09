@@ -69,10 +69,10 @@ class Handler extends ExceptionHandler
     }
     switch ($exception->guards()[0]) {
       case 'web-client':
-        return redirect('login-client');
+        return redirect('client\login-client');
         break;
       case 'web-restaurant':
-        return redirect('login-restaurant');
+        return redirect('restaurant\login-restaurant');
       default:
         return redirect('login');
         break;

@@ -15,30 +15,32 @@
 
 Route::group(['middleware' =>['auth', 'auto-check-permission'],'prefix' => 'admin'],function()
 {
-
-  Route::resource('/city','CityController' );
-  Route::resource('/district','DistrictController' );
-  Route::resource('/setting','SettingController' );
-  Route::resource('/category','CategoryController' );
-  Route::resource('/contact','ContactController' );
-  Route::resource('/payment','PaymentController' );
-  Route::resource('/payment-method','PaymentMethodController' );
-  Route::resource('/offer','OfferController' );
-  Route::resource('/order','OrderController' );
   Route::resource('/role','RoleController' );
   Route::resource('/user','UserController' );
-  Route::resource('/client','ClientController' );
-  Route::resource('/restaurant','RestaurantController' );
-  Route::get('/restaurant/{id}/active','RestaurantController@active' )->name('active-restaurant');
-  Route::get('/restaurant/{id}/deactive','RestaurantController@deactive' )->name('deactive-restaurant');
-  Route::get('/client/{id}/active','ClientController@active' )->name('active-client');
-  Route::get('/client/{id}/deactive','ClientController@deactive' )->name('deactive-client');
-  Route::get('/change-password','UserController@changePassword')->name('user.change-password');
-  Route::post('/update-password','UserController@updatePassword')->name('user.update-password');;
-
   Route::get('/', function () {
       return view('admin-home');
   });
+  Route::group(['namespace' => 'Admin'],function()
+  {
+      Route::resource('/city','CityController' );
+      Route::resource('/district','DistrictController' );
+      Route::resource('/setting','SettingController' );
+      Route::resource('/category','CategoryController' );
+      Route::resource('/contact','ContactController' );
+      Route::resource('/payment','PaymentController' );
+      Route::resource('/payment-method','PaymentMethodController' );
+      Route::resource('/offer','OfferController' );
+      Route::resource('/order','OrderController' );
+      Route::resource('/client','ClientController' );
+      Route::resource('/restaurant','RestaurantController' );
+      Route::get('/restaurant/{id}/active','RestaurantController@active' )->name('active-restaurant');
+      Route::get('/restaurant/{id}/deactive','RestaurantController@deactive' )->name('deactive-restaurant');
+      Route::get('/client/{id}/active','ClientController@active' )->name('active-client');
+      Route::get('/client/{id}/deactive','ClientController@deactive' )->name('deactive-client');
+      Route::get('/change-password','UserController@changePassword')->name('user.change-password');
+      Route::post('/update-password','UserController@updatePassword')->name('user.update-password');;
+ });
+
 
 });
 

@@ -25,7 +25,7 @@ class RedirectIfAuthenticated
         case 'web-restaurant' :
           return redirect('restaurant/products');
         default:
-          return redirect(RouteServiceProvider::HOME);
+          return redirect('admin');
           break;
       }
         // if (Auth::guard($guard)->check()) {
